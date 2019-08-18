@@ -9,17 +9,19 @@
 <body>
 
 	<div class="container px-md-5 pb-5" id="container">
-      <div id="firstphase" style="display: block;text-align: center; margin-top: 20px">    
-        <img class="rounded-circle" height="150" width="150" id="user_img" src="" alt="profile pic"><br>
-        <span class="display-4" id="user_name">User</span>
+      <div id="firstphase" style="display: block;text-align: center; margin-top: 20px">
+        <div id="user_info">
+            
+        </div>
         <form onsubmit="return model_questions()">
             <div>
                 <input type="submit" id="test_start" style="font-size: 20px; margin: 0;" disabled value="Please Wait...">
             </div>
         </form>
         <div class="mt-2">
-            <a class="mr-5" href="index.html">Visit Our Page</a>
-            <a class="ml-5" href="" id="signOut">It's not Me</a>
+            <a href="index.html" class="mr-5 btn btn-info" style="color:white; text-decoration:none;">Visit Our Page</a>
+            <span class="ml-5 mr-5 btn btn-info" href="" id="signUp">Sign up</span>
+            <span class="ml-5 btn btn-info" id="signOut" >Sign Out</span>
         </div>
       </div> 
     </div>

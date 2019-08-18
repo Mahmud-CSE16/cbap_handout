@@ -53,3 +53,6 @@ input[type="radio"] {
     position: sticky;
     top: 10px;
 }
+#user_img{
+    border: 3px solid #5b9bd5;
+}

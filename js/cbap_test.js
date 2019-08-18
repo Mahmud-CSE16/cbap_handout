@@ -5,6 +5,9 @@ var k=1;
 var totalQuestions=0;
 var x;
 var temp_user;
+var isUser=true;
+$("#signUp").hide();
+$("#signOut").hide();
 
 //Retrieve Data
 var Ref = firebase.database().ref('quiz_questions').limitToLast(10);
@@ -112,35 +115,32 @@ function login(){
 	console.log('login called');
 	function newLoginHappend(user){
 		if(user){
+            var user_info = '<img class="rounded-circle" height="150" width="150" id="user_img" src="img/user.png" alt="profile pic"><br><span class="display-4" id="user_name">User</span>';
+            $("#user_info").html(user_info);
             document.getElementById("user_img").setAttribute("src", user.photoURL);
 	        document.getElementById("user_name").innerHTML = user.displayName;
             temp_user = user;
+            var u_id = user.uid;
+            console.log(user);
+            $("#signUp").show();
+            $("#signOut").show();
+            $("#signUp").html("It's not Me/Sign Up");
 			//model_questions();
+            firebase.database().ref(`Users/${u_id}`).once("value", snapshot => {
+            if (!snapshot.exists()){
+                  console.log("not exists!");
+                  $("#test_start").attr("disabled",true).val("You can't take exam. You have to first Sign Up via CBAP_Handout mobile app");
+                  isUser=false;
+                  user.delete();
+                }
+            });
 		}else{
-			 var provider = new firebase.auth.GoogleAuthProvider();
-             provider.setCustomParameters({
-                  prompt: 'select_account'
-                });
-			 firebase.auth().signInWithRedirect(provider);
-			 firebase.auth().getRedirectResult().then(function(result) {
-			   if (result.credential) {
-			     // This gives you a Google Access Token. You can use it to access the Google API.
-			     var token = result.credential.accessToken;
-			     // ...
-			   }
-			   // The signed-in user info.
-			   var user = result.user;
-			 }).catch(function(error) {
-			   // Handle Errors here.
-			   var errorCode = error.code;
-			   var errorMessage = error.message;
-			   // The email of the user's account used.
-			   var email = error.email;
-			   // The firebase.auth.AuthCredential type that was used.
-			   var credential = error.credential;
-			   // ...
-			   document.getElementById("results").innerHTML = errorMessage;
-			 });
+            if(isUser){
+			 $("#test_start").val("Please Sign Up with Your Google Account");
+             $("#signUp").show();
+             $("#signUp").html("SignUp");
+             $("#signOut").hide();
+            }
 		}
 	}
 
@@ -178,17 +178,54 @@ function countDown(){
     }, 1000);
 }
 
+function signUp(){
+    $("#test_start").val("Please Wait...");
+    console.log('signUp called');
+            var provider = new firebase.auth.GoogleAuthProvider();
+             provider.setCustomParameters({
+                  prompt: 'select_account'
+                });
+             firebase.auth().signInWithRedirect(provider);
+             firebase.auth().getRedirectResult().then(function(result) {
+               if (result.credential) {
+                 // This gives you a Google Access Token. You can use it to access the Google API.
+                 var token = result.credential.accessToken;
+                 // ...
+               }
+               // The signed-in user info.
+               var user = result.user;
+               console.log(user);
+             }).catch(function(error) {
+               // Handle Errors here.
+               var errorCode = error.code;
+               var errorMessage = error.message;
+               // The email of the user's account used.
+               var email = error.email;
+               // The firebase.auth.AuthCredential type that was used.
+               var credential = error.credential;
+               // ...
+               document.getElementById("results").innerHTML = errorMessage;
+             });
+}
 
 function signOut(){
     firebase.auth().signOut().then(function() {
-    login();
+        console.log("signOut");
     }).catch(function(error) {
       // An error happened.
     });
+    return false;
 }
 
-
+$("#signUp").click(function(){
+    signOut();
+    signUp();
+});
 window.onload = login();
 $("#signOut").click(function(){
     signOut();
-})
+    $("#user_info").html("");
+    $("#test_start").attr("disabled",true).val("Please Sign Up with Your Google Account");
+    $("#signOut").hide();
+    $("#signUp").html("SignUp");
+});
